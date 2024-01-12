@@ -1,0 +1,5 @@
+ Subnet:
+   Type: AWS::EC2::Subnet
+   Properties:
+     VpcId: !Ref VPC
+     CidrBlock: !Ref SubnetCidrBlock

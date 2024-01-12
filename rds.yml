@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t2.micro
+  DBInstanceClass:
+    Type: String
+    Default: db.t2.micro
+  DBAllocatedStorage:
+    Type: Number
+    Default: 5
+  DBName:
+    Type: String
+    Default: mydb
+  DBUser:
+    Type: String
+    Default: admin
+  DBPassword:
+    Type: String
+    NoEcho: true 
+
+Resources:
+  rdsDBInstance:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      AllocatedStorage: !Ref DBAllocatedStorage
+      DBInstanceClass: !Ref DBInstanceClass
+      AllowMajorVersionUpgrade: true
+      AutoMinorVersionUpgrade: true
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      BackupRetentionPeriod: 7
+      CharacterSetName: utf8
+      DBInstanceIdentifier: !Ref DBName
+      DBName: !Ref DBName
+      DBParameterGroupName: default.mysql5.7
+      DBSecurityGroups: []
+      DBSubnetGroupName: !Ref DBSubnetGroupName
+      Engine: mysql
+      EngineVersion: "5.7"
+      Iops: 1000
+      KmsKeyId: ""
+      LicenseModel: general-public-license
+      MasterUsername: !Ref DBUser
+      MasterUserPassword: !Ref DBPassword
+      MultiAZ: false
+      OptionGroupName: default:mysql-5-7
+      Port: 3306
+      PreferredBackupWindow: "03:00-04:00"
+      PreferredMaintenanceWindow: "sun:05:00-sun:06:00"
+      PubliclyAccessible: false
+      StorageEncrypted: false
+      StorageType: gp2
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+      VPCSecurityGroups: [!Ref VPC]
+
+  iamAccessKey:
+    Type: "AWS::IAM::AccessKey"
+    Properties:
+      Status: Active
+      UserName: !Ref DBUser
+
+Outputs:
+  InstanceId:
+    Value: !Ref rdsDBInstance
+  AZ:
+    Value: !GetAtt rdsDBInstance.AvailabilityZone
+  PublicDNS:
+    Value: !GetAtt rdsDBInstance.Endpoint.Address

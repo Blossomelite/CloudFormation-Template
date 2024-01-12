@@ -1,0 +1,55 @@
+Parameters:
+  ImageId:
+    Type: String
+  InstanceType:
+    Type: String
+    Default: "t2.micro"
+  Environment:
+    Type: String
+    AllowedValues:
+      - dev
+      - test
+      - stage
+      - prod
+    Default: dev
+
+Mappings:
+  RegionMap:
+    us-east-1:
+      BLISS: ami-0c55b159cbfafe1f0
+      BLOSS: ami-0a584ac55a7631c0c
+    us-west-1:
+      BLUE: ami-0a887e401f7654935
+      BLOOM: ami-0d8f6eb4f641ef691
+
+  EC2DetailsBasedOnEnv:
+    dev:
+      InstanceType: "t2.nano"
+      VolumeSize: 8
+    test:
+      InstanceType: "t2.micro"
+      VolumeSize: 10
+    stage:
+      InstanceType: "t2.small"
+      VolumeSize: 12
+    prod:
+      InstanceType: "t2.medium"
+      VolumeSize: 14
+
+Resources:
+  MyEC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: !FindInMap [RegionMap, !Ref AWS::Region, !Ref ImageId]
+      InstanceType: !FindInMap [EC2DetailsBasedOnEnv, !Ref Environment, "InstanceType"]
+      BlockDeviceMappings:
+        - DeviceName: "/dev/xvda"
+          Ebs:
+            VolumeType: "io1"
+            Iops: "200"
+            DeleteOnTermination: true
+            VolumeSize: !FindInMap [EC2DetailsBasedOnEnv, !Ref Environment, "VolumeSize"]
+
+
+
+

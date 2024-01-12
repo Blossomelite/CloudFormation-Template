@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Dream-Server resources teamplate creating EC2 & security group"
+
+Parameters:
+  Ec2Keys:
+    Type: String
+    Default: "mykey"
+  ImageId:
+    Type: String
+    Default: "ami-0c55b159cbfafe1f0"
+  InstanceType:
+    Type: String
+    Default: "t2.micro"
+    AllowedValues:
+      - "t2.nano"
+      - "t2.micro"
+      - t2.small
+
+Resources:
+  myEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: !Ref Ec2Keys
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds:
+        - !Ref SecurityGroupName
+      Tags:
+        - Key: "Name"
+          Value: "Dream-Server"
+        - Key: "Team"
+          Value: "DreamTeam"
+
+  SecurityGroupName:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: Dream-Server-sg
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: "22"
+          IpProtocol: tcp
+          ToPort: "22"

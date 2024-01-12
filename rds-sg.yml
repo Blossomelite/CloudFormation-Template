@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "security group"
+
+Parameters:
+  myVPC:
+    Type: AWS::EC2::VPC::Id
+
+Resources: 
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http to client host
+      VpcId: !Ref myVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0  
+
+Outputs: 
+  SecurityGroupId:
+    Description: "security group id value"
+    Value: !Ref InstanceSecurityGroup
+    Export:
+      Name: Dream-Server-sg SecurityGroupId
+      
+  VpcId:
+    Description: "where security group has been created"
+    Value: !Ref myVPC

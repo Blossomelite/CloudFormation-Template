@@ -1,0 +1,42 @@
+Resources:
+  Dream-Server:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", BLISS, BLOSS]
+      InstanceType: !Ref InstanceType
+      KeyName: mykey
+      SecurityGroupIds:
+        - !Ref EC2SecurityGroup
+      SubnetId: !Ref Subnet
+
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          EBS:
+            VolumeSize: 8
+            DeleteOnTermination: True
+      Tags:
+        - Key: "Name"
+          Value: "Dream-Server"
+        - Key: "Team"
+          Value: "DreamTeam"
+
+  Dream-App:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", BLOSS]
+      InstanceType: !Ref InstanceType
+      KeyName: mykey
+      SecurityGroupIds:
+        - !Ref EC2SecurityGroup
+      SubnetId: !Ref Subnet
+
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          EBS:
+            VolumeSize: 8
+            DeleteOnTermination: True
+      Tags:
+        - Key: "Name"
+          Value: "Dream-App"
+        - Key: "Team"
+          Value: "DreamTeam"
